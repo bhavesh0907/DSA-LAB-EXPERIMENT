@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define a structure named 'Person'
+struct Person {
+    char name[50];
+    int age;
+    float height;
+};
+
+int main() {
+    // Declare a pointer to a structure of type 'Person'
+    struct Person *personPtr;
+
+    // Dynamically allocate memory for a single 'Person' structure
+    personPtr = (struct Person *)malloc(sizeof(struct Person));
+
+    if (personPtr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1; // Exit with an error code
+    }
+
+    // Access and set values for the members of the structure using pointers
+    printf("Enter name: ");
+    scanf("%s", personPtr->name); // Note: No '&' is used for arrays when using scanf
+
+    printf("Enter age: ");
+    scanf("%d", &personPtr->age);
+
+    printf("Enter height (in meters): ");
+    scanf("%f", &personPtr->height);
+
+    // Display the information
+    printf("\nPerson Information:\n");
+    printf("Name: %s\n", personPtr->name);
+    printf("Age: %d\n", personPtr->age);
+    printf("Height: %.2f meters\n", personPtr->height);
+
+    // Release the dynamically allocated memory
+    free(personPtr);
+
+    return 0;
+}
