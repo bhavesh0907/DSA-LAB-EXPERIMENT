@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a node in the linked list
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Define the structure for the queue
+struct Queue {
+    struct Node* front; // Front of the queue (for dequeue)
+    struct Node* rear;  // Rear of the queue (for enqueue)
+};
+
+// Function to initialize the queue
+void initializeQueue(struct Queue* queue) {
+    queue->front = NULL;
+    queue->rear = NULL;
+}
+
+// Function to check if the queue is empty
+int isQueueEmpty(struct Queue* queue) {
+    return queue->front == NULL;
+}
+
+// Function to enqueue an element into the queue
+void enqueue(struct Queue* queue, int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed. Cannot enqueue %d.\n", value);
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if (isQueueEmpty(queue)) {
+        queue->front = newNode;
+        queue->rear = newNode;
+    } else {
+        queue->rear->next = newNode;
+        queue->rear = newNode;
+    }
+
+    printf("%d enqueued into the queue.\n", value);
+}
+
+// Function to dequeue an element from the queue
+int dequeue(struct Queue* queue) {
+    if (isQueueEmpty(queue)) {
+        printf("Queue is empty. Cannot dequeue.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    struct Node* temp = queue->front;
+    int value = temp->data;
+
+    if (queue->front == queue->rear) {
+        queue->front = NULL;
+        queue->rear = NULL;
+    } else {
+        queue->front = queue->front->next;
+    }
+
+    free(temp);
+
+    return value;
+}
+
+// Function to display the elements of the queue
+void displayQueue(struct Queue* queue) {
+    if (isQueueEmpty(queue)) {
+        printf("Queue is empty.\n");
+    } else {
+        struct Node* current = queue->front;
+        printf("Queue elements: ");
+        while (current != NULL) {
+            printf("%d ", current->data);
+            current = current->next;
+        }
+        printf("\n");
+    }
+}
+
+// Function to free the memory allocated for the queue
+void freeQueue(struct Queue* queue) {
+    struct Node* current = queue->front;
+    struct Node* next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    queue->front = NULL;
+    queue->rear = NULL;
+}
+
+int main() {
+    struct Queue myQueue;
+    initializeQueue(&myQueue);
+
+    enqueue(&myQueue, 10);
+    enqueue(&myQueue, 20);
+    enqueue(&myQueue, 30);
+    displayQueue(&myQueue);
+
+    printf("Dequeued: %d\n", dequeue(&myQueue));
+    displayQueue(&myQueue);
+
+    printf("Dequeued: %d\n", dequeue(&myQueue));
+    displayQueue(&myQueue);
+
+    printf("Dequeued: %d\n", dequeue(&myQueue));
+    displayQueue(&myQueue);
+
+    // Trying to dequeue from an empty queue
+    // printf("Dequeued: %d\n", dequeue(&myQueue));
+
+    freeQueue(&myQueue);
+
+    return 0;
+}
