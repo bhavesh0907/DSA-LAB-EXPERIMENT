@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+// Define the structure for the stack
+struct Stack {
+    int arr[MAX_SIZE];
+    int top;
+};
+
+// Function to initialize the stack
+void initializeStack(struct Stack* stack) {
+    stack->top = -1;
+}
+
+// Function to check if the stack is empty
+int isStackEmpty(struct Stack* stack) {
+    return stack->top == -1;
+}
+
+// Function to check if the stack is full
+int isStackFull(struct Stack* stack) {
+    return stack->top == MAX_SIZE - 1;
+}
+
+// Function to push an element onto the stack
+void push(struct Stack* stack, int value) {
+    if (isStackFull(stack)) {
+        printf("Stack Overflow. Cannot push %d.\n", value);
+        exit(EXIT_FAILURE);
+    } else {
+        stack->arr[++stack->top] = value;
+    }
+}
+
+// Function to pop an element from the stack
+int pop(struct Stack* stack) {
+    if (isStackEmpty(stack)) {
+        printf("Stack Underflow. Cannot pop from an empty stack.\n");
+        exit(EXIT_FAILURE);
+    } else {
+        return stack->arr[stack->top--];
+    }
+}
+
+// Factorial function using recursion
+int factorial(int n) {
+    if (n == 0 || n == 1) {
+        return 1;
+    } else {
+        return n * factorial(n - 1);
+    }
+}
+
+// Factorial function using a stack to manage recursion
+int factorialWithStack(int n) {
+    struct Stack callStack;
+    initializeStack(&callStack);
+    int result = 1;
+
+    while (1) {
+        if (n == 0 || n == 1) {
+            if (!isStackEmpty(&callStack)) {
+                n = pop(&callStack);
+            } else {
+                break;
+            }
+        } else {
+            push(&callStack, n - 1);
+            result *= n;
+            --n;
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int num = 5;
+
+    // Using recursion
+    printf("Factorial of %d using recursion: %d\n", num, factorial(num));
+
+    // Using a stack to manage recursion
+    printf("Factorial of %d using stack: %d\n", num, factorialWithStack(num));
+
+    return 0;
+}
