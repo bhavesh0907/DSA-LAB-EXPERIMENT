@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a node in the linked list
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+// Define the structure for the stack
+struct Stack {
+    struct Node *top;
+};
+
+// Function to initialize the stack
+void initializeStack(struct Stack *stack) {
+    stack->top = NULL;
+}
+
+// Function to check if the stack is empty
+int isEmpty(struct Stack *stack) {
+    return stack->top == NULL;
+}
+
+// Function to push an element onto the stack
+void push(struct Stack *stack, int value) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed. Cannot push %d.\n", value);
+        return;
+    }
+
+    newNode->data = value;
+    newNode->next = stack->top;
+    stack->top = newNode;
+
+    printf("%d pushed onto the stack.\n", value);
+}
+
+// Function to pop an element from the stack
+void pop(struct Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack Underflow. Cannot pop from an empty stack.\n");
+        return;
+    }
+
+    struct Node *temp = stack->top;
+    stack->top = stack->top->next;
+
+    printf("%d popped from the stack.\n", temp->data);
+    free(temp);
+}
+
+// Function to display the elements of the stack
+void displayStack(struct Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack is empty.\n");
+    } else {
+        struct Node *current = stack->top;
+        printf("Stack elements: ");
+        while (current != NULL) {
+            printf("%d ", current->data);
+            current = current->next;
+        }
+        printf("\n");
+    }
+}
+
+// Function to free the memory allocated for the stack
+void freeStack(struct Stack *stack) {
+    struct Node *current = stack->top;
+    struct Node *next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    stack->top = NULL;
+}
+
+int main() {
+    struct Stack myStack;
+    initializeStack(&myStack);
+
+    push(&myStack, 10);
+    push(&myStack, 20);
+    push(&myStack, 30);
+    displayStack(&myStack);
+
+    pop(&myStack);
+    displayStack(&myStack);
+
+    pop(&myStack);
+    pop(&myStack);
+    displayStack(&myStack);
+
+    pop(&myStack); // Trying to pop from an empty stack
+
+    freeStack(&myStack);
+
+    return 0;
+}
