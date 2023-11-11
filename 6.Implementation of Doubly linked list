@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a node in the doubly linked list
+struct Node {
+    int data;
+    struct Node* next;
+    struct Node* prev;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    newNode->prev = NULL;
+    return newNode;
+}
+
+// Function to insert a new node at the beginning of the doubly linked list
+void insertAtBeginning(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    newNode->next = *head;
+
+    if (*head != NULL) {
+        (*head)->prev = newNode;
+    }
+
+    *head = newNode;
+    printf("Node with data %d inserted at the beginning.\n", data);
+}
+
+// Function to insert a new node at the end of the doubly linked list
+void insertAtEnd(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        struct Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        newNode->prev = temp;
+    }
+
+    printf("Node with data %d inserted at the end.\n", data);
+}
+
+// Function to delete a node with a specific data value
+void deleteNode(struct Node** head, int data) {
+    if (*head == NULL) {
+        printf("List is empty. Cannot delete.\n");
+        return;
+    }
+
+    struct Node* temp = *head;
+
+    while (temp != NULL && temp->data != data) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Node with data %d not found. Cannot delete.\n", data);
+        return;
+    }
+
+    if (temp->prev != NULL) {
+        temp->prev->next = temp->next;
+    } else {
+        *head = temp->next;
+    }
+
+    if (temp->next != NULL) {
+        temp->next->prev = temp->prev;
+    }
+
+    free(temp);
+    printf("Node with data %d deleted.\n", data);
+}
+
+// Function to display the doubly linked list from the beginning
+void displayForward(struct Node* head) {
+    struct Node* current = head;
+    printf("Doubly Linked List (Forward): ");
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+// Function to display the doubly linked list from the end
+void displayBackward(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL && current->next != NULL) {
+        current = current->next;
+    }
+
+    printf("Doubly Linked List (Backward): ");
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->prev;
+    }
+    printf("NULL\n");
+}
+
+// Function to free the memory allocated for the doubly linked list
+void freeList(struct Node** head) {
+    struct Node* current = *head;
+    struct Node* next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    *head = NULL;
+}
+
+int main() {
+    struct Node* myList = NULL;
+
+    insertAtEnd(&myList, 10);
+    insertAtEnd(&myList, 20);
+    insertAtBeginning(&myList, 5);
+    displayForward(myList);
+    displayBackward(myList);
+
+    deleteNode(&myList, 20);
+    displayForward(myList);
+    displayBackward(myList);
+
+    freeList(&myList);
+
+    return 0;
+}
